@@ -8,19 +8,22 @@ class HashMap
   end
   def hash(key)
     hash_code = 0
-    prime_number = 104729 * 350381
-    # prime_number = 31
+    prime_number = 31
     key.each_char { |char| hash_code =  prime_number * hash_code + char.ord}
     hash_code
   end
   def set(key, value)
+    if @count - 2 > @loadfactor * @capacity
+      resize
+    end
      index = hash(key) % @capacity
      bucket = @buckets[index]
      if bucket.empty?
       bucket << [key,value]
       @count += 1
-     else
-      bucket[0][1] = value
+     elsif !bucket.empty? 
+      bucket.clear
+      bucket << [key,value]
      end
   end
   def get(key)
@@ -58,32 +61,45 @@ class HashMap
   end
   def keys
     all_keys = []
-    @buckets.each do |pair|
-      if !pair.empty?
-         all_keys << pair[0][0]  
+    @buckets.each do |val|
+      if !val.empty?
+         all_keys << val[0][0]  
       end 
     end
     p all_keys
   end
+  def values 
+    all_values = []
+    @buckets.each do |val|
+      if !val.empty?
+        all_values << val[0][1]
+      end
+    end
+    all_values
+  end
+  def entries
+    all_entries = []
+    @buckets.each do |val|
+      if !val.empty?
+        all_entries << val
+      end
+    end
+    all_entries
+  end
+  def resize
+      new_capacity = @capacity * 2
+      new_buckets = Array.new(new_capacity) {[]}
+      @buckets.each do |bucket|
+        bucket.each do |key,value|
+          new_index = hash(key) % new_capacity
+          new_buckets[new_index] << [key,value]
+        end
+      end
+      @capacity = new_capacity
+      @buckets = new_buckets
+    end
+  
 end
 
-hash = HashMap.new
+# hash = HashMap.new
 
-# p hash.hash('vitor')
-# p hash.set('vITOR')
-p hash.set('odin', 20323)
-p hash.set('odin', 233)
-p hash.set('odin', 533)
-p hash.set('vitor', 533)
-p hash.set('pedro', 533)
-p hash.set('hash', 533)
-p hash.get('hash')
-# p hash.has?('')
-  hash.remove('hash')
-p hash.buckets
-
-p hash.length
-# p hash.clear
-p hash.buckets
-
-p hash.keys

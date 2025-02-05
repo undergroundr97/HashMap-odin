@@ -1,42 +1,26 @@
-class HashMap
-  attr_accessor :buckets
-  def initialize(load_factor = 0.75 , capacity = 16)
-    @loadfactor = load_factor
-    @capacity = capacity
-    @buckets = Array.new(@capacity) {[]}
-  end
-  def hash(key)
-    hash_code = 0
-    # prime_number = 104729 * 350381
-    prime_number = 31
-    key.each_char { |char| hash_code =  prime_number * hash_code + char.ord}
-    hash_code
-  end
-  def set(key, value)
-     index = hash(key) % @capacity
-     bucket = @buckets[index]
-     if bucket.empty?
-      bucket << [key,value]
-     else
-      bucket[0][1] = value
-     end
-  end
-  def get(key)
-    index = hash(key) % @capacity
-    bucket = @buckets[index]
-    bucket[0][1]
-  end
-end
+require_relative 'lib/hashmap'
 
-hash = HashMap.new
+test = HashMap.new
 
-# p hash.hash('vitor')
-# p hash.set('vITOR')
-p hash.set('odin', 20323)
-p hash.set('odin', 233)
-p hash.set('odin', 533)
-p hash.set('vitor', 533)
-p hash.set('pedro', 533)
-p hash.set('hash', 533)
-p hash.get_value('hash')
-p hash.buckets
+test.set('apple', 'red')
+test.set('banana', 'yellow')
+test.set('carrot', 'orange')
+test.set('dog', 'brown')
+test.set('elephant', 'gray')
+test.set('frog', 'green')
+test.set('grape', 'purple')
+test.set('frog','green')
+test.set('hat','black')
+test.set('ice cream', 'white')
+test.set('jacket','blue')
+test.set('kite', 'pink')
+test.set('lion','golden')
+test.set('lion3','golden')
+test.set('lion2','golden')
+test.set('lion4','golden')
+test.set('lion5','golden')
+p test.buckets
+p test.length
+# test.clear
+p test.buckets
+# p test.buckets
