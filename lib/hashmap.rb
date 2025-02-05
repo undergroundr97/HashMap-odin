@@ -13,7 +13,7 @@ class HashMap
     hash_code
   end
   def set(key, value)
-    if @count - 2 > @loadfactor * @capacity
+    if @count > @loadfactor * @capacity
       resize
     end
      index = hash(key) % @capacity
@@ -22,7 +22,9 @@ class HashMap
       bucket << [key,value]
       @count += 1
      elsif !bucket.empty? 
-      bucket.clear
+      resize
+      index = hash(key) % @capacity
+      bucket = @buckets[index]
       bucket << [key,value]
      end
   end
@@ -98,7 +100,9 @@ class HashMap
       @capacity = new_capacity
       @buckets = new_buckets
     end
-  
+  def buckets_length
+    @buckets.length
+  end
 end
 
 # hash = HashMap.new

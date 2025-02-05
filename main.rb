@@ -23,4 +23,6 @@ p test.buckets
 p test.length
 # test.clear
 p test.buckets
+p test.has?('lion5')
+p test.buckets_length
 # p test.buckets
