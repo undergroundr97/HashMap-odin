@@ -1,4 +1,6 @@
-class HashMap
+require_relative 'linked_list'
+require_relative 'node'
+class HashMap < Array
   attr_accessor :buckets
   def initialize(load_factor = 0.75 , capacity = 16)
     @loadfactor = load_factor
@@ -18,15 +20,29 @@ class HashMap
     end
      index = hash(key) % @capacity
      bucket = @buckets[index]
+     to_check = [key,value]
      if bucket.empty?
-      bucket << [key,value]
+      bucket << [key,value] # if bucket empty, add to bucket
       @count += 1
-     elsif !bucket.empty? 
-      resize
-      index = hash(key) % @capacity
-      bucket = @buckets[index]
-      bucket << [key,value]
+     elsif bucket[0].is_a?(LinkedList) && bucket[0].contains_key?(key)
+      # require 'pry-byebug'; binding.pry
+      p bucket[0].contains_key?(key)
+      index_node = bucket[0].find_key(key)
+      bucket[0].change_value_at(index_node, key, value)
+     elsif !bucket[0].empty? && bucket[0].is_a?(LinkedList) && !bucket[0].contains_key?(key)
+      
+      bucket[0].append([key,value]) # if bucket is a linkedlist, append its value to current_node.next_node
+     elsif !bucket.empty? && bucket[0][0] == key && bucket[0][1]
+      bucket[0][1] = value # if bucket is not empty and contains a value, change its value
+     elsif !bucket.empty? && !bucket[0].is_a?(LinkedList)
+       saved_value = bucket[0]
+       bucket.clear
+      bucket[0] = LinkedList.new(saved_value)
+      bucket[0].append([key,value])
+      # p 'exec wrong'
+     
      end
+    
   end
   def get(key)
     index = hash(key) % @capacity
@@ -36,7 +52,7 @@ class HashMap
   def has?(key)
     index = hash(key) % @capacity
     bucket = @buckets[index]
-    p bucket
+     bucket
     bucket.empty? ? false : true
   end
   def remove(key)
